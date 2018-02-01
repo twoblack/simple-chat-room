@@ -43,16 +43,6 @@ public class UserController {
 	@ResponseBody
 	public String addfriend(@AuthenticationPrincipal UserPrincipal userPrincipal,@RequestParam String friend){
 		return relationService.addFriend(userPrincipal.getUsername(),friend);
-	}
-	
-//	@RequestMapping("/register")
-//	public String register(User user){
-//		if(null != userService.selectByUsername(user.getUsername())){
-//			return "注册失败";
-//		}
-//		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//		user.setRegisterData(dateFormat.format(new Date()));
-//		return "注册成功";
-//	}
+	}	
 	
 }

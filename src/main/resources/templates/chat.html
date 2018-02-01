@@ -92,8 +92,8 @@
     function showMessage(message) {
         $("#messageWindow").append("<div class='message-div row'>"+
                                    " <div style='margin-left: 55px'>"+
-                                   "<p class='user-username'>" + message.sender + "</p> <p class='user-time'>"+message.sendTime+"</p><br>"+
-                                   "<div class='message-box-left'>" + message.content + "</div></div></div><br>"
+                                   "<p class='user-username'>" + message.sender + "说：</p> <p class='user-time'>"+message.sendTime+"</p>"+
+                                   "<div class='message-box-left'>" + message.content + "</div></div></div><br><br>"
         );
     }
 

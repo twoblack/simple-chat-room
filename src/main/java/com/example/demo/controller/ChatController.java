@@ -23,8 +23,13 @@ public class ChatController {
 	@Autowired
 	private SimpMessagingTemplate template;
 	
-	@MessageMapping("/all")
-	@SendTo("/topic/all")
+	/**
+	 * @param principal 当前用户
+	 * @param message 接收到的客户端的消息
+	 * @return 包装后的消息
+	 */
+	@MessageMapping("/all")//接收发送到  /{服务端接收地址的前缀}/all 地址的消息
+	@SendTo("/topic/all")//将return的结果发送到  /topic/all 地址
 	public String all(Principal principal,String message){
 		BaseMessage baseMessage = new BaseMessage();
 		baseMessage.setType(Constants.TO_ALL);
@@ -34,7 +39,11 @@ public class ChatController {
 		return JSON.toJSONString(baseMessage);
 	}
 	
-	@MessageMapping("/chat")
+	/**
+	 * @param principal
+	 * @param message
+	 */
+	@MessageMapping("/chat")//接收发送到  /{服务端接收地址的前缀}/chat 地址的消息
 	public void chat(Principal principal,String message){
 		ChatMessage chatMessage = JSON.parseObject(message,ChatMessage.class);
 		BaseMessage baseMessage = new BaseMessage();
@@ -43,6 +52,8 @@ public class ChatController {
 		System.out.println(principal.getName());
 		baseMessage.setContent(chatMessage.getContent());
 		baseMessage.setSendTime(format.format(new Date()));
+		
+		//转发包装后的消息至/{user}/topic/chat地址
 		template.convertAndSendToUser(chatMessage.getReceiver(), "/topic/chat", JSON.toJSONString(baseMessage));
 	}
 }

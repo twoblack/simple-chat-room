@@ -18,6 +18,9 @@ public class PageController {
 	@Autowired
 	private RelationService relationService;
 	
+	/**
+	 * @return 跳转url地址别名或者物理跳转地址
+	 */
 	@GetMapping(value="/login")
 	public String login(){
 		return "login";
@@ -27,6 +30,11 @@ public class PageController {
 		return "register";
 	}
 	
+	/**
+	 * @param userPrincipal @AuthenticationPrincipal可获取当前登录用户
+	 * @param model 用于向页面传递数据
+	 * @return
+	 */
 	@GetMapping(value="/chat")
 	public String chat(@AuthenticationPrincipal UserPrincipal userPrincipal, Model model){
 		model.addAttribute("user", userPrincipal);

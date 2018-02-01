@@ -18,12 +18,17 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer{
 
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
-		registry.addEndpoint("/any-socket").withSockJS();
+		//添加服务端点，接收客户端的连接
+		registry.addEndpoint("/any-socket")
+				//开启SockJS支持
+				.withSockJS();
 	}
 	
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry registry) {
+		//服务端接收地址的前缀
 		registry.setApplicationDestinationPrefixes("/app");
+		//客户端订阅地址的前缀信息
 		registry.enableSimpleBroker("/topic","/user");
 	}
 	
@@ -34,6 +39,9 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer{
 			@Override
 			public WebSocketHandler decorate(WebSocketHandler handler) {
 				return new WebSocketHandlerDecorator(handler){
+					/* (non-Javadoc)
+					 * 客户端与服务端建立连接后的服务端的操作
+					 */
 					@Override
 					public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 						String username = session.getPrincipal().getName();
@@ -41,6 +49,9 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer{
 						super.afterConnectionEstablished(session);
 					}
 					
+					/* (non-Javadoc)
+					 * 客户端与服务端断开连接后服务端的操作
+					 */
 					@Override
 					public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus)
 							throws Exception {
