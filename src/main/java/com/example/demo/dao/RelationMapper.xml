@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.RelationMapper">
+  <resultMap id="BaseResultMap" type="com.example.demo.model.Relation">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="friend" jdbcType="VARCHAR" property="friend" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    id, username, friend
+  </sql>
+	
+  <select id="getFriendsByUsername" parameterType="java.lang.String" resultType="java.lang.String">
+    SELECT friend FROM relation WHERE username = #{username,jdbcType=VARCHAR}
+  </select>
+  
+  <insert id="addFriend">
+  	INSERT INTO relation (username,friend) VALUES (#{username},#{friend})
+  </insert>
+  
+</mapper>

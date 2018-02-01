@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<title>register</title>
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.0.js"></script>
+</head>
+<body>
+	<form onsubmit="return false">
+    	<input type="text" class="form-control" name="username" id="username" placeholder="用户名"/>
+        <input type="password" class="form-control" name="password" id="password" placeholder="密码"/>
+     	<input type="text" class="form-control" name="nickname" id="nickname" placeholder="昵称"/>
+        <div class="form-group">
+        	<div class="input-group col-md-6 col-md-offset-3">
+            	<button class="btn btn-success btn-block" id="Complete">完成</button>
+       		</div>
+      	</div>
+      	<div class="form-group">
+        	<div class="input-group col-md-6 col-md-offset-3" style="text-align: center">
+          		<a href="/login"><span class="glyphicon glyphicon-triangle-left"></span>返回登录页面</a>
+          	</div>
+     	</div>
+	</form>
+	
+	<script>
+    /* 注册点击事件 */
+    $("#Complete").click(function () {
+        $.post("/register",
+               {
+                   "username": $("#username").val(),
+                   "password": $("#password").val(),
+                   "nickname": $("#nickname").val(),
+               },
+                function (data) {
+                   if (data){
+                       alert("注册成功");
+                   }
+               }
+        );
+
+    });
+
+</script>
+</body>
+</html>
