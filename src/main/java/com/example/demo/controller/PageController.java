@@ -30,6 +30,11 @@ public class PageController {
 		return "register";
 	}
 	
+	@GetMapping(value="/Pic")
+	public String Pic(){
+		return "Pic";
+	}
+	
 	/**
 	 * @param userPrincipal @AuthenticationPrincipal可获取当前登录用户
 	 * @param model 用于向页面传递数据

@@ -55,12 +55,18 @@
                 </div>
 
             </div>
-
+			
+			<input id="image"style="width: 0.1px; height: 0.1px; opacity: 0; overflow: hidden; position: absolute" type="file" accept="image/*"/>	
+			<label for="image">选择图片</label>
+			
+			<input id="file"style="width: 0.1px; height: 0.1px; opacity: 0; overflow: hidden; position: absolute" type="file"/>	
+			<label for="file">选择文件</label>
             <div class="row">
                 <div class="col-xs-9 col-md-10">
                     <input type="text" class="form-control" placeholder="Message" id="message"/>
                 </div>
                 <div class="col-xs-3 col-md-2">
+                	
                     <button class="btn btn-primary btn-block" id="send"><span class="glyphicon glyphicon-send"></span> 发送</button>
                 </div>
             </div>
@@ -86,6 +92,12 @@
             stompClient.subscribe('/user/topic/chat', function (message) {
                 showMessage(JSON.parse(message.body));
             });
+            stompClient.subscribe('/topic/pic/all', function (message) {
+                showImg(message);
+            });
+            stompClient.subscribe('/topic/file/all', function (message) {
+                showfile(message);
+            });
         });
     }
 
@@ -93,16 +105,105 @@
         $("#messageWindow").append("<div class='message-div row'>"+
                                    " <div style='margin-left: 55px'>"+
                                    "<p class='user-username'>" + message.sender + "说：</p> <p class='user-time'>"+message.sendTime+"</p>"+
-                                   "<div class='message-box-left'>" + message.content + "</div></div></div><br><br>"
+                                   "<div class='message-box-left'>" + message.content + "</div></div></div><br></br>"
         );
     }
+    
+    var imgsrc = "";
+    
+    function showImg(message) {
+    	var img = document.createElement("img");
+    	var body = message.body;
+    	if(body.indexOf(":") != -1){
+    		imgsrc += body.substring(0,60000);
+    	}else{
+    		imgsrc += body;
+    		img.src="data:"+imgsrc;
+        	img.width=100;
+        	document.getElementById("messageWindow").appendChild(img);
+        	$("#messageWindow").append("<br/>");
+        	imgsrc = "";
+    	}
+    	
+    }
+    
+   	var filesrc = "";
+    function showfile(message) {
+    	var body = message.body;
+    	if(body.indexOf("_") != -1){
+    		filesrc += body.substring(0,60000);
+    	}else{
+    		filesrc += body;
+    		var blob = new Blob([filesrc]);
+    		var a = document.createElement("a");
+    		a.href = window.URL.createObjectURL(blob);
+    		a.download = "a.txt";
+    		a.textContent = "Download";
+
+    		document.getElementById("messageWindow").appendChild(a);
+        	/* $("#messageWindow").append("<div>"+filesrc+"</div><br/>"); */
+        	filesrc = "";
+    	}
+    	
+    } 
 
     $(function () {
         connect();
 
         $("#send").click(function () {
+        	var imageElement = document.getElementById("image");  
+            var imageList = imageElement.files;  
+            var image=imageList[0];
+            
+            var fileElement = document.getElementById("file");  
+            var fileList = fileElement.files;  
+            var file=fileList[0]; 
+ 
             if (target == "to_all"){
-                stompClient.send("/app/all", {}, $("#message").val());
+            	if($("#message").val()){
+            		stompClient.send("/app/all", {}, $("#message").val());
+            	}
+                
+            	if(file){
+                    var reader = new FileReader();  
+                    //以二进制形式读取文件  
+                    reader.readAsText(file,"UTF-8");  
+                    //文件读取完毕后该函数响应  
+                    reader.onload = function loaded(evt) {
+                        var blob = evt.target.result;
+                        var str = blob;
+                        /* var sr = blob.split(":");
+                        var str = sr[1];
+                        var lock = false; */
+                        while(str.length>60001){
+                        	var sub=str.substring(0,60000)+"_";
+                        	str = str.substring(60000);
+                        	stompClient.send("/app/file/all", {}, sub); 
+                        }
+                        stompClient.send("/app/file/all", {}, str); 
+                        
+                    } 
+                }  
+            	
+                if(image){
+                    var reader = new FileReader();  
+                    //以二进制形式读取文件  
+                    reader.readAsDataURL(image);  
+                    //文件读取完毕后该函数响应  
+                    reader.onload = function loaded(evt) {
+                        var blob = evt.target.result;
+                        var sr = blob.split(":");
+                        var str = sr[1];
+                        while(str.length>60001){
+                        	var sub=str.substring(0,60000)+":";
+                        	str = str.substring(60000);
+                        	stompClient.send("/app/pic/all", {},/* img */sub); 
+                        }
+                        stompClient.send("/app/pic/all", {},/* img */str); 
+                        
+                    } 
+                }  
+
             }else{
                 var content = "{'type':'to_one','content':'" + $("#message").val() + "','receiver':'"+target+"'}";
                 stompClient.send("/app/chat", {}, content);

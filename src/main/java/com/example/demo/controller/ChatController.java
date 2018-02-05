@@ -1,8 +1,12 @@
 package com.example.demo.controller;
 
+import java.nio.ByteBuffer;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
+import java.util.Base64;
 import java.util.Date;
+
+import javax.websocket.Decoder.Binary;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -14,6 +18,7 @@ import com.alibaba.fastjson.JSON;
 import com.example.demo.message.BaseMessage;
 import com.example.demo.message.ChatMessage;
 import com.example.demo.utils.Constants;
+import com.example.demo.vo.ByteMessage;
 
 @Controller
 public class ChatController {
@@ -37,6 +42,18 @@ public class ChatController {
 		baseMessage.setSender(principal.getName());
 		baseMessage.setSendTime(format.format(new Date()));
 		return JSON.toJSONString(baseMessage);
+	}
+	
+	@MessageMapping("/pic/all")//接收发送到  /{服务端接收地址的前缀}/all 地址的消息
+	@SendTo("/topic/pic/all")//将return的结果发送到  /topic/all 地址
+	public synchronized String picAll(Principal principal,String message){
+		return message;
+	}
+	
+	@MessageMapping("/file/all")//接收发送到  /{服务端接收地址的前缀}/all 地址的消息
+	@SendTo("/topic/file/all")//将return的结果发送到  /topic/all 地址
+	public synchronized String fileAll(Principal principal,String message){
+		return message;
 	}
 	
 	/**
