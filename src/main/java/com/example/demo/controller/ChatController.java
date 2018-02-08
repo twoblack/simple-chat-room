@@ -1,12 +1,9 @@
 package com.example.demo.controller;
 
-import java.nio.ByteBuffer;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
-import java.util.Base64;
 import java.util.Date;
 
-import javax.websocket.Decoder.Binary;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -18,7 +15,6 @@ import com.alibaba.fastjson.JSON;
 import com.example.demo.message.BaseMessage;
 import com.example.demo.message.ChatMessage;
 import com.example.demo.utils.Constants;
-import com.example.demo.vo.ByteMessage;
 
 @Controller
 public class ChatController {
@@ -29,6 +25,7 @@ public class ChatController {
 	private SimpMessagingTemplate template;
 	
 	/**
+	 * 群聊
 	 * @param principal 当前用户
 	 * @param message 接收到的客户端的消息
 	 * @return 包装后的消息
@@ -44,19 +41,32 @@ public class ChatController {
 		return JSON.toJSONString(baseMessage);
 	}
 	
+	/**
+	 * 群发图片
+	 * @param principal
+	 * @param message
+	 * @return
+	 */
 	@MessageMapping("/pic/all")//接收发送到  /{服务端接收地址的前缀}/all 地址的消息
 	@SendTo("/topic/pic/all")//将return的结果发送到  /topic/all 地址
-	public synchronized String picAll(Principal principal,String message){
-		return message;
-	}
-	
-	@MessageMapping("/file/all")//接收发送到  /{服务端接收地址的前缀}/all 地址的消息
-	@SendTo("/topic/file/all")//将return的结果发送到  /topic/all 地址
-	public synchronized String fileAll(Principal principal,String message){
+	public String picAll(Principal principal,String message){
 		return message;
 	}
 	
 	/**
+	 * 群发文件
+	 * @param principal
+	 * @param message
+	 * @return
+	 */
+	@MessageMapping("/file/all")//接收发送到  /{服务端接收地址的前缀}/all 地址的消息
+	@SendTo("/topic/file/all")//将return的结果发送到  /topic/all 地址
+	public String fileAll(Principal principal,String message){
+		return message;
+	}
+	
+	/**
+	 * 私聊
 	 * @param principal
 	 * @param message
 	 */
