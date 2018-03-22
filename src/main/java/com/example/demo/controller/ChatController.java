@@ -53,6 +53,20 @@ public class ChatController {
 		return message;
 	}
 	
+	@MessageMapping("/pic/chat")//接收发送到  /{服务端接收地址的前缀}/chat 地址的消息
+	public void pic2One(Principal principal,String message){
+		ChatMessage chatMessage = JSON.parseObject(message,ChatMessage.class);
+		BaseMessage baseMessage = new BaseMessage();
+		baseMessage.setType(Constants.TO_ONE);
+		baseMessage.setSender(principal.getName());
+		System.out.println(principal.getName());
+		baseMessage.setContent(chatMessage.getContent());
+		baseMessage.setSendTime(format.format(new Date()));
+		
+		//转发包装后的消息至/{user}/topic/chat地址
+		template.convertAndSendToUser(chatMessage.getReceiver(), "/topic/pic/chat", JSON.toJSONString(baseMessage));
+	}
+	
 	/**
 	 * 群发文件
 	 * @param principal
@@ -63,6 +77,20 @@ public class ChatController {
 	@SendTo("/topic/file/all")//将return的结果发送到  /topic/all 地址
 	public String fileAll(Principal principal,String message){
 		return message;
+	}
+	
+	@MessageMapping("/file/chat")//接收发送到  /{服务端接收地址的前缀}/chat 地址的消息
+	public void file2One(Principal principal,String message){
+		ChatMessage chatMessage = JSON.parseObject(message,ChatMessage.class);
+		BaseMessage baseMessage = new BaseMessage();
+		baseMessage.setType(Constants.TO_ONE);
+		baseMessage.setSender(principal.getName());
+		System.out.println(principal.getName());
+		baseMessage.setContent(chatMessage.getContent());
+		baseMessage.setSendTime(format.format(new Date()));
+		
+		//转发包装后的消息至/{user}/topic/chat地址
+		template.convertAndSendToUser(chatMessage.getReceiver(), "/topic/file/chat", JSON.toJSONString(baseMessage));
 	}
 	
 	/**

@@ -95,7 +95,13 @@
             stompClient.subscribe('/topic/pic/all', function (message) {
                 showImg(message);
             });
+            stompClient.subscribe('/topic/pic/chat', function (message) {
+                showImg(message);
+            });
             stompClient.subscribe('/topic/file/all', function (message) {
+                showfile(message);
+            });
+            stompClient.subscribe('/topic/file/chat', function (message) {
                 showfile(message);
             });
         });
